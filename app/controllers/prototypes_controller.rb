@@ -3,8 +3,7 @@ class PrototypesController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show]
   before_action :contributor_confirmation, only: [:edit, :update, :destroy]
 
-
-  def index # indexアクションを定義した
+  def index
     @prototypes = Prototype.all.includes(:user)
   end
 
@@ -13,28 +12,27 @@ class PrototypesController < ApplicationController
   end
 
   def show
-    @prototype = Prototype.find(params[:id])
     @comment = Comment.new
     @comments = Comment.all
   end
 
-def edit
-  @prototype = Prototype.find(params[:id])
- end
+  def edit
+  end
 
- def update
-  @prototype = Prototype.find(params[:id])
+  def update
     if @prototype.update(prototype_params)
       redirect_to prototype_path(@prototype)
     else
-      render :edit
+      render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
-    @prototype = Prototype.new(prototype_params)
-    prototype.destroy
-    redirect_to root_path
+    if @prototype.destroy
+      redirect_to root_path
+    else
+      redirect_to root_path
+    end
   end
 
   def create
@@ -42,8 +40,7 @@ def edit
     if @prototype.save
       redirect_to root_path
     else
-      Rails.logger.debug "Prototype save errors: #{@prototype.errors.full_messages}"
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -60,6 +57,4 @@ def edit
   def contributor_confirmation
     redirect_to root_path unless current_user == @prototype.user
   end
-
- 
 end
