@@ -29,26 +29,27 @@
             <%= @prototype.concept %>
           </p>
         </div>
-        <% if user_signed_in? %>
-          <%= form_with model: [ @prototype, @prototype.comments.build ], local: true do |f| %>
-            <div class="field">
-              <%= f.label :content, "コメント" %><br />
-              <%= f.text_field :content, id: "comment_content" %>
-            </div>
-            <%= f.submit "コメントを投稿する" %>
+        <div class="prototype__comments">
+          <% if user_signed_in? %>
+            <%= form_with model: [@prototype, @comment], local: true do |f| %>
+              <div class="field">
+                <%= f.label :content, "コメント" %><br />
+                <%= f.text_field :content, id:"comment_content" %>
+              </div>
+              <div class="actions">
+                <%= f.submit "送信する", class: :form__btn %>
+              </div>
+            <% end %>
           <% end %>
-        <% end %>
-        <ul class="comments_lists">
-  <% @prototype.comments.each do |comment| %>
-    <li class="comments_list">
-      <%= comment.content %>
-      <% if comment.user %>
-        <%= link_to comment.user.name, user_path(comment.user), class: :comment_user %>
-        <% end %>
-    </li>
-    
-  <% end %>
-</ul>
+          <ul class="comments_lists">
+            <% @comments.each do |comment| %>
+              <li class="comments_list">
+                <%= comment.content %>
+                <%= link_to "（#{comment.user.name}）", user_path(comment.user), class: :comment_user %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
